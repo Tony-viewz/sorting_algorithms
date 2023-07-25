@@ -1,51 +1,55 @@
 #include "sort.h"
 
 /**
- * swap - swaps positions of two numbers
- * @a: pointer to the 1st figure to be swapped
- * @b: pointer to the 2nd figure to be swapped
-*/
-void swap(int *a, int *b)
-{
-	int temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-/**
- * insertion_sort_list - sorts a doubly linked list of integers in ascending
- * order using the Insertion sort algorithm
- * @list: doubly linked list
- * Description: prints arrays after each swap
+ * insertion_sort_list - implement insertion sort algorithm in a doubly LL
+ * @list: double pointer to list to head of list
+ *
+ * Return: list after every swap
  */
 void insertion_sort_list(listint_t **list)
 {
-	size_t i, j;
+	listint_t *curr, *temp;
 
-	for (i = 0; i < size - 1; i++)
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
+		return;
+
+	for (curr = (*list)->next; curr && curr->prev; curr = curr->next)
 	{
-		for (j = 0; j < size - i - 1; j++)
+		for (; curr && curr->prev && curr->n < curr->prev->n;
+				curr = curr->prev)
 		{
-			if (array[j] > array[j + 1])
-			{
-				swap(&array[j], &array[j + 1]);
-				print_array(array, size);
-			}
+			temp = curr->prev;
+			swap(list, temp, curr);
+			print_list(*list);
+			curr = curr->next;
 		}
 	}
 }
 
 /**
- * NB :
- * Whenever a swappable pair is encountered, make the swap,
- * and go back to the beginning
- * 
- * Since this is a linked list the swap and has to swap nodes
- * instead of array indexes
- * 
- * How do we go back to the beginning?
- * We set the temp pointer with which we are traversing the list
- * to point to the head node
+ * swap - swap two nodes
+ * @head: head node of DLL;
+ * @nd_1: 1st node
+ * @nd_2: 2nd node
+ *
+ * Return: void
  */
+void swap(listint_t **head, listint_t *nd_1, listint_t *nd_2)
+{
+	listint_t *prev, *next;
+
+	prev = nd_1->prev;
+	next = nd_2->next;
+
+	if (prev != NULL)
+		prev->next = nd_2;
+	else
+		*head = nd_2;
+
+	nd_1->prev = nd_2;
+	nd_1->next = next;
+	nd_2->prev = prev;
+	nd_2->next = nd_1;
+	if (next)
+		next->prev = nd_1;
+}
