@@ -1,55 +1,51 @@
 #include "sort.h"
 
 /**
- * insertion_sort_list - implement insertion sort algorithm in a doubly LL
- * @list: double pointer to list to head of list
- *
- * Return: list after every swap
+ * swap_nodes - Swap two nodes in a listint_t doubly-linked list.
+ * @h: A pointer to the head of the doubly-linked list.
+ * @n1: A pointer to the 1st node to be swapped.
+ * @n2: A pointer to the 2nd node to be swapped.
+ */
+void swap_nodes(listint_t **h, listint_t **n1, listint_t *n2)
+{
+	(*n1)->next = n2->next;
+	if (n2->next != NULL)
+		n2->next->prev = *n1;
+	n2->prev = (*n1)->prev;
+	n2->next = *n1;
+
+	if ((*n1)->prev != NULL)
+		(*n1)->prev->next = n2;
+
+	else
+		*h = n2;
+
+	(*n1)->prev = n2;
+	*n1 = n2->prev;
+}
+
+/**
+ * insertion_sort_list - Sorts a doubly linked list of integers
+ *                       using the insertion sort algorithm.
+ * @list: A pointer to the head of a doubly-linked list.
+ * Description: Prints the list after each swap.
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *curr, *temp;
+	listint_t *iter, *insert, *tmp;
 
 	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
 
-	for (curr = (*list)->next; curr && curr->prev; curr = curr->next)
+	for (iter = (*list)->next; iter != NULL; iter = tmp)
 	{
-		for (; curr && curr->prev && curr->n < curr->prev->n;
-				curr = curr->prev)
+		tmp = iter->next;
+		insert = iter->prev;
+
+		while (insert != NULL && iter->n < insert->n)
 		{
-			temp = curr->prev;
-			swap(list, temp, curr);
-			print_list(*list);
-			curr = curr->next;
+			swap_nodes(list, &insert, iter);
+			print_list((const listint_t *)*list);
 		}
 	}
-}
-
-/**
- * swap - swap two nodes
- * @head: head node of DLL;
- * @nd_1: 1st node
- * @nd_2: 2nd node
- *
- * Return: void
- */
-void swap(listint_t **head, listint_t *nd_1, listint_t *nd_2)
-{
-	listint_t *prev, *next;
-
-	prev = nd_1->prev;
-	next = nd_2->next;
-
-	if (prev != NULL)
-		prev->next = nd_2;
-	else
-		*head = nd_2;
-
-	nd_1->prev = nd_2;
-	nd_1->next = next;
-	nd_2->prev = prev;
-	nd_2->next = nd_1;
-	if (next)
-		next->prev = nd_1;
 }
